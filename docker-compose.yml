@@ -1,0 +1,20 @@
+services:
+  frontend:
+    build:
+      context: .
+      target: development-stage
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      - API_HOST=${API_HOST}
+    networks:
+      - gerador-cnab-network
+    command: npm run dev
+
+networks:
+  gerador-cnab-network:
+    external: true
+    name: gerador-cnab-network
