@@ -1,0 +1,89 @@
+:root {
+  --vgt-bg: #131318;
+  --vgt-header-bg: #18181b;
+  --vgt-header-color: #e5e7eb;
+  --vgt-row-bg: #18181b;
+  --vgt-row-alt-bg: #131318;
+  --vgt-row-hover-bg: #23232b;
+  --vgt-border-color: #33354d;
+  --vgt-primary: #6366f1;
+  --vgt-text: #e5e7eb;
+}
+
+.vue-good-table {
+  background: var(--vgt-bg) !important;
+  border-radius: 12px 12px 0 0 !important;
+  border: 1.5px solid var(--vgt-border-color) !important;
+  border-bottom: none !important;
+  overflow: hidden;
+}
+
+.vgt-table {
+  background: var(--vgt-bg) !important;
+  border-radius: 12px 12px 0 0 !important;
+  border: none !important;
+  overflow: hidden;
+}
+
+.vgt-table thead > tr:first-child > th:first-child {
+  border-top-left-radius: 12px !important;
+}
+.vgt-table thead > tr:first-child > th:last-child {
+  border-top-right-radius: 12px !important;
+}
+
+.vgt-table thead tr:first-child th {
+  background: var(--vgt-header-bg) !important;
+  color: var(--vgt-header-color) !important;
+  border-bottom: 2px solid #6366f1 !important;
+}
+
+.vgt-table th,
+.vgt-table td,
+.vgt-table tr,
+.vue-good-table,
+.vgt-table,
+.vgt-wrap__footer,
+.vgt-pagination {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.vgt-table tbody tr {
+  background: var(--vgt-row-bg) !important;
+}
+
+.vgt-table td {
+  background: transparent !important;
+  color: var(--vgt-text) !important;
+  border-bottom: none !important;
+  padding: 0.45rem 1rem !important;
+  font-size: 0.97rem;
+}
+
+.vgt-table tr {
+  transition: background 0.2s;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.vgt-table tr:hover td {
+  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%) !important;
+  color: #fff !important;
+  transition: background 0.2s;
+}
+
+.vgt-wrap__footer,
+.vgt-pagination {
+  background: var(--vgt-bg) !important;
+  color: var(--vgt-text) !important;
+  border-radius: 0 0 12px 12px !important;
+  border-left: 1.5px solid var(--vgt-border-color) !important;
+  border-right: 1.5px solid var(--vgt-border-color) !important;
+  border-bottom: 1.5px solid var(--vgt-border-color) !important;
+  border-top: none !important;
+  min-height: 32px !important;
+  height: 40px !important;
+  padding: 0.2rem 0.7rem !important;
+  box-sizing: border-box;
+}

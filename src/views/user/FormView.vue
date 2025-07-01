@@ -1,0 +1,123 @@
+<template>
+    <div class="header-content">
+        <BaseTitle>Criar Usuário</BaseTitle>
+    </div>
+
+    <BaseMessage v-if="showSuccess" type="success" message="Usuário cadastrado com sucesso!" :duration="5000"
+        @close="showSuccess = false" />
+
+    <BaseMessage v-if="showError" type="error" :message="apiErrorMessage" :errors="apiErrors" :duration="5000"
+        @close="showError = false" />
+
+    <div class="form-container">
+        <form @submit.prevent="handleSubmit">
+            <div class="form-grid">
+                <BaseInput id="name" v-model="form.name" label="Nome" type="text" placeholder="Digite o nome do usuário"
+                    :error="apiErrors.name?.[0]" />
+
+                <BaseInput id="email" v-model="form.email" label="Email" type="email" placeholder="Digite o e-mail do usuário"
+                    :error="apiErrors.email?.[0]" />
+
+                <BaseInput id="password" v-model="form.password" label="Senha" type="password" placeholder="Digite a senha"
+                    :error="apiErrors.password?.[0]" />
+
+                <BaseSelect id="role" v-model="form.role" label="Tipo" :options="userRoles" :error="apiErrors.role?.[0]" />
+            </div>
+
+            <div class="form-actions">
+                <BaseButton type="submit" class="btn-salvar">
+                    Salvar
+                </BaseButton>
+            </div>
+        </form>
+    </div>
+</template>
+<script setup lang="ts">
+import { ref, reactive } from 'vue'
+import BaseButton from '@/components/base/BaseButton.vue'
+import BaseTitle from '@/components/base/BaseTitle.vue'
+import BaseMessage from '@/components/base/BaseMessage.vue'
+import BaseInput from '@/components/base/BaseInput.vue'
+import BaseSelect from '@/components/base/BaseSelect.vue'
+import { translateApiErrors } from '@/utils/translateErrors'
+import axios from 'axios'
+
+const showSuccess = ref(false)
+const showError = ref(false)
+const apiErrorMessage = ref('')
+const apiErrors = ref<Record<string, string[]>>({})
+
+const form = reactive({
+    name: '',
+    email: '',
+    password: '',
+    role: 'admin',
+})
+
+const userRoles = [
+    { value: 'admin', label: 'Admin' },
+    { value: 'user', label: 'Comum' },
+]
+
+const handleSubmit = async () => {
+    const token = localStorage.getItem('auth_token')
+
+    axios.post('/admin/users', form, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+        .then(() => {
+            showSuccess.value = true
+            showError.value = false
+            apiErrorMessage.value = ''
+            apiErrors.value = {}
+            form.name = ''
+            form.email = ''
+            form.password = ''
+            form.role = 'admin'
+        })
+        .catch(error => {
+            console.error('Erro ao salvar usuario:', error)
+            showSuccess.value = false
+            showError.value = true
+            apiErrorMessage.value = 'Erro ao salvar usuario. Verifique os campos obrigatórios.'
+            apiErrors.value = translateApiErrors(error.response?.data?.errors || {})
+        })
+}
+</script>
+
+<style scoped>
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.form-container {
+    background-color: #8e8e8e;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-container :deep(label) {
+    color: #1a1a1a;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-salvar {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.5rem;
+}
+</style>
