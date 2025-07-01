@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
+import UnauthorizedView from '../views/UnauthorizedView.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,12 +21,26 @@ const router = createRouter({
           path: 'user',
           name: 'user',
           component: () => import('../views/user/FormView.vue'),
+          beforeEnter: (to, from, next) => {
+            const authStore = useAuthStore()
+
+            if (authStore.isAdmin) {
+              next()
+            } else {
+              next({ name: 'unauthorized' })
+            }
+          },
         },
         {
           path: '',
           redirect: { name: 'home' },
         },
       ],
+    },
+    {
+      path: '/unauthorized',
+      name: 'unauthorized',
+      component: UnauthorizedView
     },
   ],
 })
