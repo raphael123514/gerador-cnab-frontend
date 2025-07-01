@@ -8,8 +8,8 @@
                 <RouterLink :to="'/user'" v-slot="{ isActive }">
                     <span :class="[styles['sidebar-link'], isActive && styles['sidebar-link-active']]"
                         style="text-decoration: none !important; box-shadow: none !important;">
-                        <IconAddUser style="margin-right: 8px; vertical-align: middle;" />
-                        Criar Usuario
+                        <IconUsers style="margin-right: 8px; vertical-align: middle;" />
+                        Usuários
                     </span>
                 </RouterLink>
             </li>
@@ -21,7 +21,7 @@
 import { RouterLink } from 'vue-router'
 import styles from './SidebarMenu.module.css'
 import { useAuthStore } from '@/stores/auth'
-import IconAddUser from '../icons/IconAddUser.vue'
+import IconUsers from '../icons/IconUsers.vue'
 
 const authStore = useAuthStore()
 </script>

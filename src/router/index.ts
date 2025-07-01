@@ -20,7 +20,7 @@ const router = createRouter({
         {
           path: 'user',
           name: 'user',
-          component: () => import('../views/user/FormView.vue'),
+          component: () => import('../views/users/UsuariosView.vue'),
           beforeEnter: (to, from, next) => {
             const authStore = useAuthStore()
 
