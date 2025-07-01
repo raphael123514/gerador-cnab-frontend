@@ -74,7 +74,7 @@ const form = reactive<UserForm>({
 
 const userRoles: SelectOption[] = [
     { value: 'admin', label: 'Admin' },
-    { value: 'user', label: 'Comum' },
+    { value: 'user', label: 'Usuário' },
 ]
 
 const resetForm = () => {
