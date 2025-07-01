@@ -40,49 +40,66 @@ import BaseTitle from '@/components/base/BaseTitle.vue'
 import BaseMessage from '@/components/base/BaseMessage.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseSelect from '@/components/base/BaseSelect.vue'
-import { translateApiErrors } from '@/utils/translateErrors'
-import axios from 'axios'
+import { translateApiErrors } from '@/utils/translateErrors';
+import axios, { isAxiosError } from 'axios';
+
+interface UserForm {
+    name: string;
+    email: string;
+    password: string;
+    role: 'admin' | 'user';
+}
+
+interface SelectOption {
+    value: 'admin' | 'user';
+    label: string;
+}
+
+interface ApiValidationPayload {
+    message: string;
+    errors: Record<string, string[]>;
+}
 
 const showSuccess = ref(false)
 const showError = ref(false)
 const apiErrorMessage = ref('')
 const apiErrors = ref<Record<string, string[]>>({})
 
-const form = reactive({
+const form = reactive<UserForm>({
     name: '',
     email: '',
     password: '',
     role: 'admin',
 })
 
-const userRoles = [
+const userRoles: SelectOption[] = [
     { value: 'admin', label: 'Admin' },
     { value: 'user', label: 'Comum' },
 ]
 
-const handleSubmit = async () => {
-    const token = localStorage.getItem('auth_token')
+const resetForm = () => {
+    form.name = '';
+    form.email = '';
+    form.password = '';
+    form.role = 'admin';
+}
 
-    axios.post('/admin/users', form, {
-        headers: { Authorization: `Bearer ${token}` }
-    })
-        .then(() => {
-            showSuccess.value = true
-            showError.value = false
-            apiErrorMessage.value = ''
-            apiErrors.value = {}
-            form.name = ''
-            form.email = ''
-            form.password = ''
-            form.role = 'admin'
-        })
-        .catch(error => {
-            console.error('Erro ao salvar usuario:', error)
-            showSuccess.value = false
-            showError.value = true
-            apiErrorMessage.value = 'Erro ao salvar usuario. Verifique os campos obrigatórios.'
-            apiErrors.value = translateApiErrors(error.response?.data?.errors || {})
-        })
+const handleSubmit = async () => {
+    const token = localStorage.getItem('auth_token');
+    apiErrors.value = {};
+    showError.value = false;
+    try {
+        await axios.post('/admin/users', form, { headers: { Authorization: `Bearer ${token}` } });
+        showSuccess.value = true;
+        resetForm();
+    } catch (error) {
+        console.error('Erro ao salvar usuário:', error);
+        showError.value = true;
+        apiErrorMessage.value = 'Erro ao salvar usuário. Verifique os campos obrigatórios.';
+        if (isAxiosError<ApiValidationPayload>(error) && error.response?.data?.errors) {
+            apiErrors.value = translateApiErrors(error.response.data.errors);
+        }
+    }
 }
 </script>
 
