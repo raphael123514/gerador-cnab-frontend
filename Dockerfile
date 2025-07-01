@@ -1,5 +1,5 @@
 # Estágio de desenvolvimento
-FROM node:20-alpine as development-stage
+FROM node:22-alpine as development-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -8,7 +8,7 @@ EXPOSE 5173
 CMD ["npm", "run", "dev"]
 
 # Estágio de construção (build)
-FROM node:20-alpine as build-stage
+FROM node:22-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
