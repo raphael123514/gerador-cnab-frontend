@@ -40,7 +40,7 @@ const modelValueProxy = computed({
     padding: 0.75rem 1rem;
     border-radius: 0.75rem;
     border: none;
-    background: #18181b;
+    background: #b2b2b3;
     color: #fff;
     font-size: 1rem;
     outline: none;

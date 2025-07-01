@@ -42,8 +42,7 @@ select {
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   border: 1px solid #33354d;
-  background: #23232b;
-  color: #e5e7eb;
+  background: #b2b2b3;
   font-size: 1rem;
   outline: none;
   transition: border 0.2s;
