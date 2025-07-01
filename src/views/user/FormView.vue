@@ -1,5 +1,5 @@
 <template>
-    <div class="header-content">
+    <div :class="style['header-content']">
         <BaseTitle>Criar Usuário</BaseTitle>
     </div>
 
@@ -9,7 +9,7 @@
     <BaseMessage v-if="showError" type="error" :message="apiErrorMessage" :errors="apiErrors" :duration="5000"
         @close="showError = false" />
 
-    <div class="form-container">
+    <div :class="[style.container, 'form-container']">
         <form @submit.prevent="handleSubmit">
             <div class="form-grid">
                 <BaseInput id="name" v-model="form.name" label="Nome" type="text" placeholder="Digite o nome do usuário"
@@ -34,6 +34,7 @@
 </template>
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import style from '@/layouts/ContentPage.module.css'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseTitle from '@/components/base/BaseTitle.vue'
 import BaseMessage from '@/components/base/BaseMessage.vue'
@@ -86,23 +87,6 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-.header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-}
-
-.form-container {
-    background-color: #8e8e8e;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.form-container :deep(label) {
-    color: #1a1a1a;
-}
 
 .form-grid {
     display: grid;
@@ -119,5 +103,9 @@ const handleSubmit = async () => {
 .btn-salvar {
     font-size: 0.95rem;
     padding: 0.6rem 1.5rem;
+}
+
+.form-container :deep(label) {
+    color: #1a1a1a;
 }
 </style>
