@@ -26,7 +26,7 @@ export const useAuthStore = defineStore('auth', {
             try {
                 const response = await axios.post('/login', credentials)
 
-                const token = response.data.token || response.data.data?.token
+                const token = response.data.access_token || response.data.data?.access_token
                 const user = response.data.user || response.data.data?.user
 
                 if (token && user) {
@@ -46,17 +46,27 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
-        logout() {
-            // 1. Limpa o estado reativo do Pinia
-            this.token = null
-            this.user = { role: [null] } as User
+        async logout() {
+            
+            try {
+                await axios.post('/logout')
+                
+                // 1. Limpa o estado reativo do Pinia
+                this.token = null
+                this.user = { role: [null] } as User
+    
+                // 2. Remove os dados persistidos do localStorage
+                localStorage.removeItem('auth_token')
+                localStorage.removeItem('user')
+    
+                // 3. Remove o cabeçalho de autorização padrão do Axios
+                delete axios.defaults.headers.common['Authorization']
 
-            // 2. Remove os dados persistidos do localStorage
-            localStorage.removeItem('auth_token')
-            localStorage.removeItem('user')
-
-            // 3. Remove o cabeçalho de autorização padrão do Axios
-            delete axios.defaults.headers.common['Authorization']
+                return true 
+            } catch (error) {
+                console.error('Erro no logout:', error)
+                throw error
+            }
         }
     }
 })
