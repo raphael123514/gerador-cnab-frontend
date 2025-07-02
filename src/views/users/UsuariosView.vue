@@ -30,6 +30,7 @@ import UsuariosModal from './UsuariosModal.vue';
 import BaseTitle from '@/components/base/BaseTitle.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import IconAddUser from '@/components/icons/IconAddUser.vue';
+import BaseMessage from '@/components/base/BaseMessage.vue';
 
 
 interface ApiValidationPayload {
@@ -137,6 +138,7 @@ const handleSave = async (data: { name: string; email: string; password: string;
         await axios.post('/admin/users', data, { headers: { Authorization: `Bearer ${token}` } });
         showSuccess.value = true;
         openModal.value = false
+        fetchUsers()
     } catch (error) {
         console.error('Erro ao salvar usuário:', error);
         showError.value = true;
