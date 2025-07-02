@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 interface User {
+    name : string | null
     role: 'admin' | 'user' | [string | null]
 }
 
@@ -53,7 +54,7 @@ export const useAuthStore = defineStore('auth', {
                 
                 // 1. Limpa o estado reativo do Pinia
                 this.token = null
-                this.user = { role: [null] } as User
+                this.user = { role: [null], name : null } as User
     
                 // 2. Remove os dados persistidos do localStorage
                 localStorage.removeItem('auth_token')
