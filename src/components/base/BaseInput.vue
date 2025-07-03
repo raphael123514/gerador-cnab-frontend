@@ -41,7 +41,7 @@ const modelValueProxy = computed({
     border-radius: 0.75rem;
     border: none;
     background: #b2b2b3;
-    color: #fff;
+    color: black;
     font-size: 1rem;
     outline: none;
     transition: box-shadow 0.2s;

@@ -26,8 +26,11 @@
 
         <div class="filters-container">
             <div class="filter-inputs-row">
-                <BaseInput id="date-filter" label="Data da solicitação" v-model="localFilters.created_at" v-maska
-                    data-maska="##/##/#### - ##/##/####" placeholder="dd/mm/yyyy - dd/mm/yyyy" />
+                <div class="input-group">
+                    <label class="input-label">Selecione a Data</label>
+                    <VueDatePicker class="custom-datepicker"  v-model="localFilters.created_at" range dark placeholder="dd/mm/yyyy - dd/mm/yyyy" format="dd/MM/yyyy" label="Data da solicitação" multi-calendars/>
+
+                </div>
                 <BaseSelect id="status-filter" label="Status" v-model="localFilters.state" :options="statusOptions" />
                 <BaseButton @click="applyFilters">Filtrar</BaseButton>
                 <BaseButton @click="clearFilters" class="btn-secondary">Limpar</BaseButton>
@@ -40,8 +43,11 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import VueDatePicker from '@vuepic/vue-datepicker';
+
 import { VueGoodTable } from 'vue-good-table-next'
-import style from '@/layouts/ContentPage.module.css'
+import style from '@/layouts/ContentPage.module.css';
+import './CNABView.css';
 import { translateApiErrors } from '@/utils/translateErrors';
 import axios, { isAxiosError } from 'axios';
 
@@ -264,62 +270,11 @@ function clearFilters() {
 
 onMounted(fetchCnabImports);
 </script>
-<style scoped>
-.import-container {
-    gap: 1rem;
-    margin-bottom: 1rem;
-    background-color: #111827;
-    padding: 1.5rem;
-    border-radius: 0.75rem;
-    border: 1px solid #374151;
-}
-
-.container-inputs-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    min-width: 100vh;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    align-items: flex-end;
-   
-}
-
-
-.filters-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    /* margin-bottom: 1rem; */
-    background-color: #111827;
-    padding: 1.5rem;
-    border-radius: 0.75rem 0.75rem 0 0;
-    border-bottom: 2px solid #6366f1 !important;
-}
-
+<style lang="css" scoped>
 :deep(.vgt-table) {
     border-radius: 0px 0px 0 0 !important;
 }
-
-.filter-inputs-row {
-    display: grid;
-    grid-template-columns: 250px 180px 200px 200px;
-    gap: 1rem;
-    align-items: flex-end;
-}
-
-/* Remove a margem inferior do BaseInput para alinhá-lo corretamente com o BaseSelect */
 :deep(.filter-inputs-row .input-group) {
     margin-bottom: 0;
 }
-
-.btn-secondary {
-    background: linear-gradient(90deg, #c12f2f 0%, #f60101 100%);
-}
-
-.btn-secondary:hover {
-    background: linear-gradient(90deg, #c12f2f 0%, #f60101 100%);
-    transform: translateY(-2px) scale(1.03);
-}
-
 </style>

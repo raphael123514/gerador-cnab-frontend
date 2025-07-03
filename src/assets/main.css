@@ -1,5 +1,6 @@
 @import './base.css';
 @import '@/assets/styles/vue-good-table-custom.css';
+@import '@/assets/styles/vue-datepicker';
 
 :global(html),
 :global(body),

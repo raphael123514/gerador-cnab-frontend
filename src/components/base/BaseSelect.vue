@@ -39,11 +39,13 @@ const modelValueProxy = computed({
 <style scoped>
 select {
   width: 100%;
+  height: 43px;
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   border: 1px solid #33354d;
   background: #b2b2b3;
   font-size: 1rem;
+  color: black;
   outline: none;
   transition: border 0.2s;
 }

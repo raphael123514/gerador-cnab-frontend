@@ -1,0 +1,51 @@
+.custom-datepicker {
+  --dp-border: 1px solid #6366f1 !important;
+  --dp-text-color: #000000 !important;
+  --dp-icon-color: #000000 !important;
+  --dp-placeholder-color: #6c757d !important;
+  --dp-background-color: #b2b2b3 !important;
+  --dp-border-radius: 0.75rem !important;
+  --dp-input-padding: 0.75rem 1rem !important;
+  --dp-font-size: 1rem !important;
+}
+
+.custom-datepicker .dp__input_wrap,
+.custom-datepicker .dp__input {
+  height: 42px !important;
+  min-height: 42px !important;
+  box-sizing: border-box !important;
+}
+
+.custom-datepicker .dp__input {
+  align-self: center;
+}
+
+.custom-datepicker .dp__input_wrap.dp__input_focus {
+  box-shadow: 0 0 0 2px #6366f1 !important;
+}
+
+.dp__menu.dp__theme_dark {
+  background: #b2b2b3 !important;
+  border: 1px solid #6366f1 !important;
+  border-radius: 0.75rem !important;
+}
+
+.dp__theme_dark .dp__calendar_item,
+.dp__theme_dark .dp__day_name {
+  color: #000000 !important;
+}
+
+.dp__theme_dark .dp__menu_header .dp__btn {
+  color: #000000 !important;
+}
+
+.dp__theme_dark .dp__menu_header svg {
+  fill: #000000 !important;
+}
+
+.dp__theme_dark {
+  --dp-hover-color: #9a9a9b !important;
+  --dp-primary-color: #6366f1 !important;
+  --dp-primary-text-color: #ffffff !important;
+  --dp-text-color: #000000 !important;
+}
