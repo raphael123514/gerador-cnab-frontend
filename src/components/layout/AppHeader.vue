@@ -32,7 +32,7 @@ const logout = async () => {
 <style scoped>
 .app-header {
     background-color: #1f1f23;
-    padding: 0.75rem 1.5rem;
+    padding: 0.20rem 1.5rem;
     border-bottom: 1px solid #27272a;
     color: #a1a1aa;
 }

@@ -21,6 +21,11 @@ const router = createRouter({
           path: 'user',
           name: 'user',
           component: () => import('../views/users/UsuariosView.vue'),
+        },
+        {
+          path: 'cnab',
+          name: 'cnab',
+          component: () => import('../views/cnab/CNABView.vue'),
           beforeEnter: (to, from, next) => {
             const authStore = useAuthStore()
 

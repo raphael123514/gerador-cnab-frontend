@@ -13,7 +13,7 @@
     flex: 1;
     background: #18181b;
     min-height: 100vh;
-    padding: 2.5rem 2rem;
+    padding: 1rem 2rem;
     color: #fff;
     overflow-y: auto;
 }

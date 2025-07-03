@@ -2,7 +2,8 @@
 .sidebar {
   background: #23272f;
   min-height: 100vh;
-  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
   display: flex;
   flex-direction: column;
   padding: 2rem 1rem;

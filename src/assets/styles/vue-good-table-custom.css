@@ -20,7 +20,7 @@
 
 .vgt-table {
   background: var(--vgt-bg) !important;
-  border-radius: 12px 12px 0 0 !important;
+  border-radius: 12px 12px 0 0;
   border: none !important;
   overflow: hidden;
 }
@@ -86,4 +86,10 @@
   height: 40px !important;
   padding: 0.2rem 0.7rem !important;
   box-sizing: border-box;
+}
+
+.vgt-table thead tr:last-child th {
+  background: #111827 !important;
+  color: var(--vgt-header-color) !important;
+  border-bottom: 2px solid #6366f1 !important;
 }

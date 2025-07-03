@@ -12,7 +12,7 @@
 .base-title {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.70rem;
     color: #fff;
 }
 </style>
