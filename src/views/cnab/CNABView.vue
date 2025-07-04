@@ -10,7 +10,7 @@
         @close="showError = false" />
 
     <div :class="style['container-entitys']">
-        <form @submit.prevent="handleImport" class="import-container">
+        <form @submit.prevent="handleImport" class="import-container" v-if="authStore.isAdmin">
             <div class="container-inputs-row">
                 <BaseFileUpload id="cnab-file" label="Upload de arquivo Excel (.xlsx)" v-model="importForm.file_upload" />
                 <BaseSelect id="fund" label="Fundo" v-model="importForm.fund_id" :options="fundOptions"  class="input-group"/>
@@ -74,6 +74,10 @@ import BaseFileUpload from '@/components/base/BaseFileUpload.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseMessage from '@/components/base/BaseMessage.vue'
 
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
 
 interface ApiValidationPayload {
     message: string;
@@ -117,7 +121,6 @@ const cnabImports = ref<CnabImport[]>([])
 const loading = ref(false)
 const totalRecords = ref(0)
 
-// Centraliza os parâmetros para a requisição ao servidor
 const serverParams = ref({
     page: 1,
     per_page: 10,
@@ -200,7 +203,7 @@ function fetchCnabImports(params = serverParams.value) {
     loading.value = true
     const token = localStorage.getItem('auth_token')
 
-    axios.get('/admin/cnab', {
+    axios.get('/cnab', {
         params: params,
         headers: { Authorization: `Bearer ${token}` }
     })
@@ -281,7 +284,7 @@ async function handleImport() {
 async function downloadFile(processingId: number | string, fileName: string, type: string) {
     const token = localStorage.getItem('auth_token');
     try {
-        const response = await axios.get(`/admin/cnab/${processingId}/download/${type}`, {
+        const response = await axios.get(`/cnab/${processingId}/download/${type}`, {
             headers: { Authorization: `Bearer ${token}` },
             responseType: 'blob',
         });
