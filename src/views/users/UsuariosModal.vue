@@ -1,18 +1,18 @@
 <template>
-    <BaseModal :open="open" title="Novo Usuário" @close="close">
+    <BaseModal :open="props.open" title="Novo Usuário" @close="close">
         <form @submit.prevent="handleSubmit">
             <div class="form-grid">
                 <BaseInput id="name" v-model="form.name" label="Nome" type="text" placeholder="Digite o nome do usuário"
-                    :error="apiErrors.name?.[0]" />
+                    />
 
                 <BaseInput id="email" v-model="form.email" label="Email" type="email" placeholder="Digite o e-mail do usuário"
-                    :error="apiErrors.email?.[0]" />
+                    />
 
                 <BaseInput id="password" v-model="form.password" label="Senha" type="password" placeholder="Digite a senha"
-                    :error="apiErrors.password?.[0]" />
+                    />
 
                 <BaseSelect id="role" v-model="form.role" label="Perfil" :options="userRoles"
-                    :error="apiErrors.role?.[0]" />
+                    />
             </div>
         </form>
         <template #footer>
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, defineEmits, defineProps, PropType } from 'vue'
+import { reactive, defineEmits, defineProps } from 'vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
@@ -47,10 +47,6 @@ const props = defineProps({
         type: Boolean,
         required: true
     },
-    apiErrors: {
-        type: Object as PropType<Record<string, string[]>>,
-        default: () => ({})
-    }
 })
 
 const form = reactive<UserForm>({
