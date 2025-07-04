@@ -1,38 +1,92 @@
-# vue-project
+# Gerador CNAB - Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Este projeto é o frontend para a aplicação de geração de CNAB. Foi desenvolvido com Vue 3, utilizando Vite para uma experiência de desenvolvimento moderna e ágil.
 
-## Recommended IDE Setup
+## ✨ Funcionalidades
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+* Autenticação de usuários com JWT.
+* Perfis de usuário (Admin e Usuário) com diferentes permissões.
+* Tela para importação de arquivos Excel (`.xlsx`) para processamento.
+* Listagem e monitoramento do status dos processamentos (pendente, processando, concluído, erro).
+* Download do arquivo Excel original e do arquivo CNAB gerado.
+* Filtros de processamentos por status e data.
+* Gestão de usuários (disponível para admins).
 
-## Type Support for `.vue` Imports in TS
+## 🚀 Rodando com Docker (Recomendado)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+Para subir o ambiente de desenvolvimento de forma rápida e isolada, utilize Docker.
 
-## Customize configuration
+**Pré-requisitos:**
+* Docker
+* Docker Compose
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Passos para a Instalação
 
-## Project Setup
+1.  **Clone o repositório:**
+    ```sh
+    git clone [URL-DO-SEU-REPOSITORIO]
+    cd [NOME-DA-PASTA-DO-PROJETO]
+    ```
 
+2.  **Crie o arquivo de ambiente:**
+    Copie o arquivo de exemplo `.env.example` para um novo arquivo chamado `.env`.
+    ```sh
+    cp .env.example .env
+    ```
+    *Observação: Abra o arquivo `.env` e configure as variáveis de ambiente necessárias, como `API_HOST`, que aponta para a URL da sua API backend.*
+
+3.  **Construa e inicie os containers:**
+    Este comando irá construir a imagem Docker do frontend e iniciar o serviço em segundo plano.
+    ```sh
+    docker-compose up -d --build
+    ```
+
+4.  **Acesse a aplicação:**
+    Após a conclusão, a aplicação estará disponível em **[http://localhost:5173](http://localhost:5173)**.
+
+## 🔑 Credenciais de Acesso
+
+Para acessar a aplicação, utilize as seguintes credenciais de exemplo:
+
+* **Usuário:** `test@example.com`
+* **Senha:** `password`
+
+## 📄 Formato do Arquivo de Importação
+
+A importação é feita através de um arquivo Excel (`.xlsx`). A planilha deve conter um cabeçalho e seguir o seguinte formato de colunas:
+
+| Coluna | Nome do Campo | Descrição | Exemplo |
+| :--- | :--- | :--- | :--- |
+| A | `contrato` | Número do contrato a ser processado. | 12345 |
+| B | `cliente` | Nome do cliente associado ao contrato. | João Silva |
+| C | `valor` | Valor financeiro da operação. | 1000.50 |
+| D | `data` | Data da operação no formato AAAA-MM-DD. | 2025-06-01 |
+
+## 🛠️ Scripts para Desenvolvimento Local (Sem Docker)
+
+Se preferir rodar o projeto localmente sem o Docker, siga os passos abaixo.
+
+**Pré-requisitos:**
+* Node.js (versão 18 ou superior)
+
+### Instalar Dependências
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Desenvolvimento (Hot-Reload)
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Compilar e Minificar para Produção
 
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### Executar Linter para Verificar Estilo de Código
 
 ```sh
 npm run lint
