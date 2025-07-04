@@ -12,8 +12,8 @@
     <div :class="style['container-entitys']">
         <form @submit.prevent="handleImport" class="import-container">
             <div class="container-inputs-row">
-                <BaseFileUpload id="cnab-file" label="Upload de arquivo Excel (.xlsx)" v-model="importForm.file" />
-                <BaseInput id="fund" label="Fundo" v-model="importForm.fund" placeholder="Digite o fundo" />
+                <BaseFileUpload id="cnab-file" label="Upload de arquivo Excel (.xlsx)" v-model="importForm.file_upload" />
+                <BaseSelect id="fund" label="Fundo" v-model="importForm.fund_id" :options="fundOptions"  class="input-group"/>
                 <BaseInput id="file-sequence" label="Sequência do Arquivo" v-model="importForm.file_sequence"
                     placeholder="Digite a sequência" />
 
@@ -38,26 +38,41 @@
         </div>
         <vue-good-table :columns="columns" :rows="cnabImports" :pagination-options="paginationOptions"
             :total-rows="totalRecords" :search-options="{ enabled: false }" :loading="loading" mode="remote"
-            @on-page-change="onPageChange" @on-per-page-change="onPerPageChange" @on-sort-change="onSortChange" />
+            :per-page="perPage"
+            v-on:page-change="onPageChange" v-on:per-page-change="onPerPageChange" v-on:sort-change="onSortChange">
+            <template #table-row="props">
+                <span v-if="props.column.field == 'actions'" class="actions-container">
+                    <button @click="downloadFile(props.row.id, props.row.original_filename, 'excel')" class="action-button" title="Baixar Excel">
+                        <PhFileXls :size="24" weight="bold" />
+                    </button>
+                    <button @click="downloadFile(props.row.id, props.row.original_filename, 'cnab')" class="action-button" title="Baixar CNAB">
+                        <PhFileTxt :size="24" weight="bold" />
+                    </button>
+                </span>
+            </template>
+        </vue-good-table>
     </div>
 </template>
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import VueDatePicker from '@vuepic/vue-datepicker';
-
-import { VueGoodTable } from 'vue-good-table-next'
-import style from '@/layouts/ContentPage.module.css';
-import './CNABView.css';
-import { translateApiErrors } from '@/utils/translateErrors';
 import axios, { isAxiosError } from 'axios';
+import moment from 'moment';
+
+import VueDatePicker from '@vuepic/vue-datepicker'
+import { VueGoodTable } from 'vue-good-table-next'
+import { PhFileXls, PhFileTxt } from '@phosphor-icons/vue'
+
+import style from '@/layouts/ContentPage.module.css'
+import './CNABView.css'
+
+import { translateApiErrors } from '@/utils/translateErrors'
 
 import BaseTitle from '@/components/base/BaseTitle.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseSelect from '@/components/base/BaseSelect.vue'
 import BaseFileUpload from '@/components/base/BaseFileUpload.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
-import BaseMessage from '@/components/base/BaseMessage.vue';
-import moment from 'moment';
+import BaseMessage from '@/components/base/BaseMessage.vue'
 
 
 interface ApiValidationPayload {
@@ -84,15 +99,17 @@ const showSuccess = ref(false)
 const showError = ref(false)
 const apiErrorMessage = ref('')
 const apiErrors = ref<Record<string, string[]>>({})
+const perPage = ref(10)
+const fundOptions = ref<{ label: string; value: number | string }[]>([]);
 
 const importForm = ref({
-    file: null as File | null,
-    fund: '',
+    file_upload: null as File | null,
+    fund_id: '',
     file_sequence: '',
 });
 
 const localFilters = ref({
-    created_at: '',
+    created_at: null as Date[] | null,
     state: '',
 });
 
@@ -111,17 +128,20 @@ const serverParams = ref({
 const columns = [
     {
         label: 'Nome do arquivo importado',
-        field: 'file_name',
+        field: 'original_filename',
         sortable: true
     },
     {
         label: 'Data da solicitação',
         field: 'created_at',
-        sortable: true
+        sortable: true,
+        formatFn: (value: string) => {
+            return value ? moment(value).format('DD/MM/YYYY H:mm:ss') : '';
+        }
     },
     {
         label: 'Status',
-        field: 'state',
+        field: 'status',
         sortable: true,
     },
     {
@@ -133,19 +153,21 @@ const columns = [
         label: 'Ações',
         field: 'actions',
         sortable: false,
+        tdClass: 'actions-cell'
     },
 ]
 
 const statusOptions = [
-    { label: 'Pendente', value: 'pending' },
-    { label: 'Processando', value: 'processing' },
-    { label: 'Concluído', value: 'completed' },
-    { label: 'Erro', value: 'error' }
+    { label: 'Pendente', value: 'pendente' },
+    { label: 'Processando', value: 'processando' },
+    { label: 'Concluído', value: 'concluido' },
+    { label: 'Erro', value: 'erro' }
 ];
 
 const paginationOptions = computed(() => ({
     enabled: true,
     mode: 'pages',
+    perPage: perPage.value,
     perPageDropdown: [5, 10, 20, 50],
     dropdownAllowAll: false,
     nextLabel: 'Próximo',
@@ -156,11 +178,29 @@ const paginationOptions = computed(() => ({
     allLabel: 'Todos'
 }))
 
+async function fetchFunds() {
+    const token = localStorage.getItem('auth_token');
+    try {
+        const response = await axios.get('/funds', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        fundOptions.value = response.data.data.map((fund: { id: number; name: string }) => ({
+            value: fund.id,
+            label: fund.name,
+        }));
+    } catch (error) {
+        console.error('Erro ao buscar a lista de fundos:', error);
+        apiErrorMessage.value = 'Não foi possível carregar a lista de fundos.';
+        showError.value = true;
+    }
+}
+
 function fetchCnabImports(params = serverParams.value) {
     loading.value = true
     const token = localStorage.getItem('auth_token')
 
-    axios.get('/admin/cnab-imports', {
+    axios.get('/admin/cnab', {
         params: params,
         headers: { Authorization: `Bearer ${token}` }
     })
@@ -182,12 +222,12 @@ const updateParams = (newProps: Partial<typeof serverParams.value>) => {
     serverParams.value = { ...serverParams.value, ...newProps };
 };
 
-const onPageChange = (params: { currentPage: number }) => {
+const onPageChange = (params: { currentPage: number; }) => {
     updateParams({ page: params.currentPage });
     fetchCnabImports();
 };
 
-const onPerPageChange = (params: { currentPerPage: number }) => {
+const onPerPageChange = (params: { currentPerPage: number; }) => {
     updateParams({ per_page: params.currentPerPage, page: 1 });
     fetchCnabImports();
 };
@@ -198,29 +238,29 @@ const onSortChange = (params: SortObject[]) => {
 };
 
 async function handleImport() {
-    if (!importForm.value.file) {
+    if (!importForm.value.file_upload) {
         apiErrorMessage.value = 'Por favor, selecione um arquivo para importar.';
         showError.value = true;
         return;
     }
 
     const formData = new FormData();
-    formData.append('file', importForm.value.file);
-    formData.append('fund', importForm.value.fund);
+    formData.append('file_upload', importForm.value.file_upload);
+    formData.append('fund_id', importForm.value.fund_id);
     formData.append('file_sequence', importForm.value.file_sequence);
 
     loading.value = true;
     const token = localStorage.getItem('auth_token');
 
     try {
-        await axios.post('/admin/cnab-imports', formData, {
+        await axios.post('/admin/cnab/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ${token}`
             }
         });
         showSuccess.value = true;
-        importForm.value = { file: null, fund: '', file_sequence: '' };
+        importForm.value = { file_upload: null, fund_id: '', file_sequence: '' };
         fetchCnabImports();
     } catch (error) {
         console.error('Erro ao importar arquivo:', error);
@@ -238,24 +278,56 @@ async function handleImport() {
     }
 }
 
+async function downloadFile(processingId: number | string, fileName: string, type: string) {
+    const token = localStorage.getItem('auth_token');
+    try {
+        const response = await axios.get(`/admin/cnab/${processingId}/download/${type}`, {
+            headers: { Authorization: `Bearer ${token}` },
+            responseType: 'blob',
+        });
+
+        let downloadFilename = fileName;
+
+        const contentDisposition = response.headers['content-disposition'];
+        if (contentDisposition && type == "cnab") {
+            const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+            if (filenameMatch && filenameMatch.length > 1) {
+                downloadFilename = filenameMatch[1];
+            }
+        }
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', downloadFilename);
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Erro ao fazer download do arquivo:', error);
+        apiErrorMessage.value = 'Não foi possível fazer o download do arquivo.';
+        showError.value = true;
+    }
+}
+
 function applyFilters() {
     const newFilters: Record<string, any> = {};
+    const dateRange = localFilters.value.created_at;
 
-    if (localFilters.value.created_at) {
-        const dateRangeString = localFilters.value.created_at;
-        const [startDateStr, endDateStr] = dateRangeString.split(' - ');
-
-        const startDate = moment(startDateStr, 'DD/MM/YYYY', true);
-        const endDate = moment(endDateStr, 'DD/MM/YYYY', true);
+    if (Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
+        const startDate = moment(dateRange[0]);
+        const endDate = moment(dateRange[1]);
 
         if (startDate.isValid() && endDate.isValid()) {
-            newFilters.created_at_start = startDate.format('YYYY-MM-DD');
-            newFilters.created_at_end = endDate.format('YYYY-MM-DD');
+            newFilters.date_from = startDate.format('YYYY-MM-DD');
+            newFilters.date_to = endDate.format('YYYY-MM-DD');
         }
     }
 
     if (localFilters.value.state) {
-        newFilters.state = localFilters.value.state;
+        newFilters.status = localFilters.value.state;
     }
 
     updateParams({ filters: newFilters, page: 1 });
@@ -263,12 +335,15 @@ function applyFilters() {
 }
 
 function clearFilters() {
-    localFilters.value.created_at = '';
+    localFilters.value.created_at = null;
     localFilters.value.state = '';
     applyFilters();
 }
 
-onMounted(fetchCnabImports);
+onMounted(() => {
+    fetchCnabImports();
+    fetchFunds();
+});
 </script>
 <style lang="css" scoped>
 :deep(.vgt-table) {
@@ -277,4 +352,10 @@ onMounted(fetchCnabImports);
 :deep(.filter-inputs-row .input-group) {
     margin-bottom: 0;
 }
+
+:deep(.actions-cell) {
+    text-align: center;
+    vertical-align: middle;
+}
+
 </style>

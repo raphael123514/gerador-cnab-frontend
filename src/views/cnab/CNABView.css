@@ -58,3 +58,24 @@
   margin-bottom: 0.5rem;
   font-size: 1rem;
 }
+
+.action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    color: white;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.action-button:hover {
+    background-color: #374151;
+    color: #e5e7eb;
+}
+
+.actions-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
